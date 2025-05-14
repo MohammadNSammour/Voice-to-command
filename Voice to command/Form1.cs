@@ -1,4 +1,3 @@
-﻿// Voice Command Application - Enhanced Version
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -22,7 +21,14 @@ namespace Voice_to_command
         [DllImport("user32.dll", SetLastError = true)] private static extern bool ExitWindowsEx(uint uFlags, uint dwReason);
         [DllImport("user32.dll")] private static extern int SendMessage(IntPtr hWnd, int hMsg, int wParam, IntPtr lParam);
         [DllImport("user32.dll", SetLastError = true)] private static extern void keybd_event(byte bVk, byte bScan, uint dwFlags, UIntPtr dwExtraInfo);
-
+        [System.Runtime.InteropServices.DllImport("Shell32.dll")]
+        static extern int SHEmptyRecycleBin(IntPtr hwnd, string pszRootPath, RecycleFlags dwFlags);
+        enum RecycleFlags : uint
+        {
+            SHERB_NOCONFIRMATION = 0x00000001,
+            SHERB_NOPROGRESSUI = 0x00000002,
+            SHERB_NOSOUND = 0x00000004
+        }
         private const int SC_MONITORPOWER = 0xF170;
         private const int WM_SYSCOMMAND = 0x0112;
         private static readonly IntPtr HWND_BROADCAST = new IntPtr(0xffff);
@@ -126,21 +132,23 @@ namespace Voice_to_command
                 recognizer.SetInputToDefaultAudioDevice();
 
                 var choices = new Choices(new string[]
-                {
-                    "open calc", "open mail", "open download", "open microsoft edge",
-                    "open clock and alarm", "open paint", "open personalization settings",
-                    "do a scan with windows defender", "open notepad", "close notepad",
-                    "shutdown", "restart", "log off", "lock screen", "mute volume", "unmute volume",
-                    "increase volume", "decrease volume", "open settings", "open browser",
-                    "take screenshot", "open task manager", "turn off monitor",
-                    "exit", "open cmd",
-                    "open user temp folder", "open control panel", "open microsoft whiteboard", "open weather"
+                 {
+                 "open calc", "open mail", "open download", "open microsoft edge",
+                 "open clock and alarm", "open paint", "open personalization settings",
+                 "do a scan with windows defender", "open notepad", "close notepad",
+                 "shutdown", "restart", "log off", "lock screen", "mute volume", "unmute volume",
+                 "increase volume", "decrease volume", "open settings", "open browser",
+                 "take screenshot", "open task manager", "turn off monitor",
+                 "exit", "open cmd", "open supported commands",
+                 "open user temp", "open control panel", "open microsoft whiteboard", "open weather",
+                 "open youtube", "empty recycle bin"
                 });
+
 
                 var grammar = new Grammar(new GrammarBuilder(choices));
                 recognizer.LoadGrammar(grammar);
                 recognizer.SpeechRecognized += Recognizer_SpeechRecognized;
-                recognizer.SpeechRecognitionRejected += (s, e) => label1.Text = "Speech not recognized.";
+                recognizer.SpeechRecognitionRejected += (s, e) => label1.Text = "The command is not recognized.";
             }
             catch (Exception ex)
             {
@@ -191,34 +199,45 @@ namespace Voice_to_command
                     case "open calc":
                         Process.Start("calc");
                         break;
-                    case "open mail": Process.Start("mailto:");
+                    case "open mail":
+                        Process.Start("mailto:");
                         break;
                     case "open download":
                         string downloads = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + "\\Downloads";
                         Process.Start("explorer.exe", downloads);
                         break;
-                    case "open microsoft edge": Process.Start("msedge");
+                    case "open microsoft edge":
+                        Process.Start("msedge");
                         break;
-                    case "open clock and alarm": Process.Start("ms-clock:");
+                    case "open clock and alarm":
+                        Process.Start("ms-clock:");
                         break;
-                    case "open paint": Process.Start("mspaint");
+                    case "open paint":
+                        Process.Start("mspaint");
                         break;
                     case "open personalization settings":
                         Process.Start("ms-settings:personalization");
                         break;
-                    case "do a scan with windows defender": Process.Start("powershell", "Start-MpScan -ScanType QuickScan");
+                    case "do a scan with windows defender":
+                        Process.Start("powershell", "Start-MpScan -ScanType QuickScan");
                         break;
-                    case "open notepad": Process.Start("notepad");
+                    case "open notepad":
+                        Process.Start("notepad");
                         break;
-                    case "close notepad": KillProcess("notepad");
+                    case "close notepad":
+                        KillProcess("notepad");
                         break;
-                    case "shutdown": Process.Start("shutdown", "/s /t 0");
+                    case "shutdown":
+                        Process.Start("shutdown", "/s /t 0");
                         break;
-                    case "restart": Process.Start("shutdown", "/r /t 0");
+                    case "restart":
+                        Process.Start("shutdown", "/r /t 0");
                         break;
-                    case "log off": ExitWindowsEx(0, 0);
+                    case "log off":
+                        ExitWindowsEx(0, 0);
                         break;
-                    case "lock screen": LockWorkStation();
+                    case "lock screen":
+                        LockWorkStation();
                         break;
                     case "mute volume":
                     case "unmute volume":
@@ -239,40 +258,94 @@ namespace Voice_to_command
                             keybd_event(VK_VOLUME_DOWN, 0, KEYEVENTF_KEYUP, UIntPtr.Zero);
                         }
                         break;
-                    case "open settings": Process.Start("ms-settings:");
+                    case "open settings":
+                        Process.Start("ms-settings:");
                         break;
-                    case "open browser": Process.Start("chrome");
+                    case "open browser":
+                        Process.Start("chrome");
                         break;
                     case "take screenshot":
-                        string screenshotPath = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyPictures), $"screenshot_{DateTime.Now:yyyyMMdd_HHmmss}.png");
-                        using (var bmp = new Bitmap(Screen.PrimaryScreen.Bounds.Width, Screen.PrimaryScreen.Bounds.Height))
+                        using (SaveFileDialog saveFileDialog = new SaveFileDialog())
                         {
-                            using (var g = Graphics.FromImage(bmp))
+                            saveFileDialog.Title = "Save Screenshot";
+                            saveFileDialog.Filter = "PNG Image|*.png";
+                            saveFileDialog.FileName = $"screenshot_{DateTime.Now:yyyyMMdd_HHmmss}.png";
+
+                            if (saveFileDialog.ShowDialog() == DialogResult.OK)
                             {
-                                g.CopyFromScreen(Point.Empty, Point.Empty, bmp.Size);
+                                string screenshotPath = saveFileDialog.FileName;
+
+                                using (var bmp = new Bitmap(Screen.PrimaryScreen.Bounds.Width, Screen.PrimaryScreen.Bounds.Height))
+                                {
+                                    using (var g = Graphics.FromImage(bmp))
+                                    {
+                                        g.CopyFromScreen(Point.Empty, Point.Empty, bmp.Size);
+                                    }
+                                    bmp.Save(screenshotPath, System.Drawing.Imaging.ImageFormat.Png);
+                                }
+
+                                MessageBox.Show("Screenshot saved successfully.");
                             }
-                            bmp.Save(screenshotPath, System.Drawing.Imaging.ImageFormat.Png);
+                            else
+                            {
+                                MessageBox.Show("Screenshot was not saved.");
+                            }
                         }
-                        MessageBox.Show("Screenshot saved to Pictures.");
                         break;
-                    case "open task manager": Process.Start("taskmgr");
+                    case "open task manager":
+                        Process.Start("taskmgr");
                         break;
-                    case "turn off monitor": SendMessage(HWND_BROADCAST, WM_SYSCOMMAND, SC_MONITORPOWER, (IntPtr)2);
+                    case "turn off monitor":
+                        SendMessage(HWND_BROADCAST, WM_SYSCOMMAND, SC_MONITORPOWER, (IntPtr)2);
                         break;
                     case "exit":
                         Application.Exit();
                         break;
-                    case "open cmd": Process.Start("cmd.exe");
+                    case "open cmd":
+                        Process.Start("cmd.exe");
                         break;
-                    case "open user temp folder": Process.Start("explorer.exe", Environment.GetEnvironmentVariable("TEMP"));
+                    case "open user temp":
+                        Process.Start("explorer.exe", Environment.GetEnvironmentVariable("TEMP"));
                         break;
-                    case "open control panel": Process.Start("control.exe");
+                    case "open control panel":
+                        Process.Start("control.exe");
                         break;
                     case "open microsoft whiteboard":
                         Process.Start("ms-whiteboard-cmd:");
                         break;
-                    case "open weather": Process.Start("msnweather:");
+                    case "open weather":
+                        Process.Start("msnweather:");
                         break;
+                    case "open supported commands":
+                        string supportedCommands =
+                "Utilities: open clock and alarm, open user temp, open control panel," +
+                " open weather, open youtube, empty recycle bin\n" +
+                "System: shutdown, restart, log off, lock screen\n" +
+                "Applications: open notepad, open paint, open cmd\n" +
+                "Volume: mute volume, unmute volume, increase volume, decrease volume\n" +
+                        "Security: do a scan with windows defender";
+                        MessageBox.Show(supportedCommands);
+                        break;
+                    case "open youtube":
+                        Process.Start("https://www.youtube.com");
+                        break;
+                    case "empty recycle bin":
+                        try
+                        {
+                            // Use SHEmptyRecycleBin Win32 API to empty the recycle bin
+                            SHEmptyRecycleBin(IntPtr.Zero, null,
+                                RecycleFlags.SHERB_NOCONFIRMATION |
+                                RecycleFlags.SHERB_NOPROGRESSUI |
+                                RecycleFlags.SHERB_NOSOUND);
+
+                            MessageBox.Show("Recycle Bin emptied successfully.");
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show("Failed to empty Recycle Bin: " + ex.Message);
+                        }
+                        break;
+
                     default:
                         MessageBox.Show("Command not supported or not yet implemented: " + command);
                         break;
@@ -296,14 +369,12 @@ namespace Voice_to_command
         {
             if (!isListening)
             {
-                pictureBox1.Image = Image.FromFile("C:\Users\mohammad\Desktop\voice to command\project files\\8862366.png");
                 recognizer.RecognizeAsync(RecognizeMode.Multiple);
                 isListening = true;
                 label1.Text = "Listening...";
             }
             else
             {
-                pictureBox1.Image = Image.FromFile("E:\\University\\~Lectures pictures & notes\\project files\\1262311.png");
                 recognizer.RecognizeAsyncStop();
                 isListening = false;
                 label1.Text = "Stopped.";
@@ -311,24 +382,26 @@ namespace Voice_to_command
             isclicked = !isclicked;
         }
 
-
         private void button1_Click(object sender, EventArgs e)
         {
-            string[] categories = {
-                "System: shutdown, restart, log off, lock screen, turn off monitor",
-                "Apps: open calculator, open mail, open cmd, open browser",
-                "Tools: open settings, open task manager, take screenshot, open notepad, close notepad, open paint",
-                "Volume: mute volume, unmute volume, increase volume, decrease volume, Exit",
-                "Security: do a scan with windows defender",
-                "Settings: open personalization settings, open microsoft whiteboard",
-                "Utilities: open clock and alarm, open user temp folder, open control panel, open weather"
-            };
-            MessageBox.Show("Supported Commands:\n\n" + string.Join("\n", categories));
+            string supportedCommands =
+                "Utilities: open clock and alarm, open user temp, open control panel," +
+                " open weather, open youtube, empty recycle bin\n" +
+                "System: shutdown, restart, log off, lock screen\n" +
+                "Applications: open notepad, open paint, open cmd\n" +
+                "Volume: mute volume, unmute volume, increase volume, decrease volume\n" +
+                "Security: do a scan with windows defender";
+            MessageBox.Show(supportedCommands);
         }
 
-        private void button2_Click(object sender, EventArgs e) => MessageBox.Show("Contact: support@voicecommand.com\nPhone: +1234567890");
+        private void button2_Click(object sender, EventArgs e) => MessageBox.Show("This program Made by:Mohammad sammour\n"+"Contact us on: Tech@support.com\n            ALL COPYRIGHT RESERVED");
 
-        private void button3_Click(object sender, EventArgs e) => MessageBox.Show("Help:\n- Click mic icon to toggle listening.\n- Speak a supported command clearly.\n- Confirm shutdown/restart commands.");
+        private void button3_Click(object sender, EventArgs e) => MessageBox.Show("Some tips and help notes:" +
+            "\n- Click mic icon to toggle listening." +
+            "\n- Speak a supported command clearly.\n" +
+            "- Confirm shutdown/restart commands." +
+            "\n-Ensure have a good microphone to take the best experimente\n" +
+            "-You can keep the program run in the background,click on 'X' to do it\n-If you want to close the program just click on exit button\nENJOY! ;)\n");
 
         private void button4_Click(object sender, EventArgs e)
         {
@@ -344,7 +417,7 @@ namespace Voice_to_command
         {
             if (commandHistory.Count == 0)
             {
-                MessageBox.Show("No commands recognized yet.");
+                MessageBox.Show("No commands recognized yet");
             }
             else
             {
