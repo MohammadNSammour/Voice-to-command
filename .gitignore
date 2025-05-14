@@ -1,37 +1,63 @@
-# Ignore build outputs
+# ===== Visual Studio & .NET Framework =====
+.vscode/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+*.vs/
+*.ncb
+*.opensdf
+*.sdf
+*.cache
+*.log
+*.tlog
+
+# ===== Build Outputs =====
 bin/
 obj/
 *.exe
 *.dll
 *.pdb
 
-# Ignore Visual Studio user-specific files
-.vscode/
-*.user
-*.suo
-*.userosscache
-*.sln.docstates
-
-# Ignore Access Database files
-*.mdb
-*.accdb
-*.ldb
-
-# Ignore NuGet packages
+# ===== NuGet =====
 packages/
 *.nupkg
-project.lock.json
 *.nuspec
+project.lock.json
+project.assets.json
 
-# Ignore logs and temporary files
-*.log
+# ===== System Files =====
+Thumbs.db
+Desktop.ini
+$RECYCLE.BIN/
 *.tmp
-*.cache
 *.bak
 
-# Ignore chart images or temp data (optional, if generated)
-Charts/
-*.chart.png
+# ===== Speech Libraries (Optional) =====
+whisper/
+whisper-temp/
+*.model
+*.pt
 
-# Ignore config overrides
-app.config.user
+# ===== ML.NET Temp Files (if used) =====
+MLModels/
+*.zip
+*.onnx
+*.pb
+
+# ===== Others =====
+*.db
+*.accdb
+*.ldb
+*.sqlite
+*.json
+*.csv
+
+# ===== Installer Artifacts (Optional) =====
+*.msi
+*.msm
+*.msp
+
+# ===== Config/User Secrets =====
+appsettings.json
+secrets.json
