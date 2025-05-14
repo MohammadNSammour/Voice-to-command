@@ -43,7 +43,7 @@ This application listens to the user's **voice commands** and performs correspon
 
 ---
 
-## 🚀 How to Run
+## How to Run
 
 1. Clone the repository
 2. Open the solution `.sln` in Visual Studio
