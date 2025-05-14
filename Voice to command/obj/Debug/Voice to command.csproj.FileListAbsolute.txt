@@ -1,0 +1,30 @@
+C:\Users\mohammad\Desktop\Voice to command\bin\Debug\Voice to command.exe.config
+C:\Users\mohammad\Desktop\Voice to command\bin\Debug\Voice to command.exe
+C:\Users\mohammad\Desktop\Voice to command\bin\Debug\Voice to command.pdb
+C:\Users\mohammad\Desktop\Voice to command\obj\Debug\Voice to command.csproj.AssemblyReference.cache
+C:\Users\mohammad\Desktop\Voice to command\obj\Debug\Voice_to_command.Form1.resources
+C:\Users\mohammad\Desktop\Voice to command\obj\Debug\Voice_to_command.Properties.Resources.resources
+C:\Users\mohammad\Desktop\Voice to command\obj\Debug\Voice to command.csproj.GenerateResource.cache
+C:\Users\mohammad\Desktop\Voice to command\obj\Debug\Voice to command.csproj.CoreCompileInputs.cache
+C:\Users\mohammad\Desktop\Voice to command\obj\Debug\Voice to command.exe
+C:\Users\mohammad\Desktop\Voice to command\obj\Debug\Voice to command.pdb
+E:\University\~Lectures pictures & notes\project files\Voice to command\bin\Debug\Voice to command.exe.config
+E:\University\~Lectures pictures & notes\project files\Voice to command\bin\Debug\Voice to command.exe
+E:\University\~Lectures pictures & notes\project files\Voice to command\bin\Debug\Voice to command.pdb
+E:\University\~Lectures pictures & notes\project files\Voice to command\obj\Debug\Voice to command.csproj.AssemblyReference.cache
+E:\University\~Lectures pictures & notes\project files\Voice to command\obj\Debug\Voice_to_command.Form1.resources
+E:\University\~Lectures pictures & notes\project files\Voice to command\obj\Debug\Voice_to_command.Properties.Resources.resources
+E:\University\~Lectures pictures & notes\project files\Voice to command\obj\Debug\Voice to command.csproj.GenerateResource.cache
+E:\University\~Lectures pictures & notes\project files\Voice to command\obj\Debug\Voice to command.csproj.CoreCompileInputs.cache
+E:\University\~Lectures pictures & notes\project files\Voice to command\obj\Debug\Voice to command.exe
+E:\University\~Lectures pictures & notes\project files\Voice to command\obj\Debug\Voice to command.pdb
+G:\Other computers\My Computer\University\~Lectures pictures & notes\project files\Voice to command\bin\Debug\Voice to command.exe.config
+G:\Other computers\My Computer\University\~Lectures pictures & notes\project files\Voice to command\bin\Debug\Voice to command.exe
+G:\Other computers\My Computer\University\~Lectures pictures & notes\project files\Voice to command\bin\Debug\Voice to command.pdb
+G:\Other computers\My Computer\University\~Lectures pictures & notes\project files\Voice to command\obj\Debug\Voice to command.csproj.AssemblyReference.cache
+G:\Other computers\My Computer\University\~Lectures pictures & notes\project files\Voice to command\obj\Debug\Voice_to_command.Form1.resources
+G:\Other computers\My Computer\University\~Lectures pictures & notes\project files\Voice to command\obj\Debug\Voice_to_command.Properties.Resources.resources
+G:\Other computers\My Computer\University\~Lectures pictures & notes\project files\Voice to command\obj\Debug\Voice to command.csproj.GenerateResource.cache
+G:\Other computers\My Computer\University\~Lectures pictures & notes\project files\Voice to command\obj\Debug\Voice to command.csproj.CoreCompileInputs.cache
+G:\Other computers\My Computer\University\~Lectures pictures & notes\project files\Voice to command\obj\Debug\Voice to command.exe
+G:\Other computers\My Computer\University\~Lectures pictures & notes\project files\Voice to command\obj\Debug\Voice to command.pdb
